@@ -156,8 +156,8 @@ RUN curl -L https://github.com/apache/camel-k/releases/download/v${KAMEL_VERSION
 # Cloud
 
 # oc
-ENV OC_VERSION=4.6
-RUN curl -L https://mirror.openshift.com/pub/openshift-v4/clients/oc/${OC_VERSION}/linux/oc.tar.gz | tar -C /usr/local/bin -xz \
+ENV OC_VERSION=4.12.0
+RUN curl -L https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${OC_VERSION}/openshift-client-linux.tar.gz | tar -C /usr/local/bin -xz \
     && chmod +x /usr/local/bin/oc
 
 ## podman buildah skopeo
@@ -294,7 +294,7 @@ RUN <<EOF
 set -euf -o pipefail
 TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
-TKN_VERSION="0.20.0"
+TKN_VERSION="0.30.1"
 TKN_ARCH="Linux_x86_64"
 TKN_TGZ="tkn_${TKN_VERSION}_${TKN_ARCH}.tar.gz"
 TKN_TGZ_URL="https://github.com/tektoncd/cli/releases/download/v${TKN_VERSION}/${TKN_TGZ}"
@@ -313,7 +313,7 @@ RUN <<EOF
 set -euf -o pipefail
 TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
-KN_VERSION="0.26.0"
+KN_VERSION="1.9.2"
 KN_ARCH="linux-amd64"
 KN_BIN="kn-${KN_ARCH}"
 KN_BIN_URL="https://github.com/knative/client/releases/download/v${KN_VERSION}/${KN_BIN}"
