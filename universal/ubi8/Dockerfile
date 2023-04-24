@@ -23,10 +23,10 @@ USER 10001
 RUN curl -fsSL "https://get.sdkman.io" | bash \
     && bash -c ". /home/user/.sdkman/bin/sdkman-init.sh \
              && sed -i "s/sdkman_auto_answer=false/sdkman_auto_answer=true/g" /home/user/.sdkman/etc/config \
-	     && sed -i "s/sdkman_auto_env=false/sdkman_auto_env=true/g" /home/user/.sdkman/etc/config \
+	         && sed -i "s/sdkman_auto_env=false/sdkman_auto_env=true/g" /home/user/.sdkman/etc/config \
              && sdk install java 8.0.332-tem \
              && sdk install java 11.0.15-tem \
-             && sdk install java 17.0.3-tem \
+             && sdk install java 17.0.7-tem \
              && sdk install java 22.1.0.0.r17-mandrel \
              && sdk default java 11.0.15-tem \
              && sdk install gradle \
@@ -61,44 +61,44 @@ ENV PATH="/home/user/.sdkman/candidates/gradle/current/bin:$PATH"
 ENV PATH="/home/user/.local/share/coursier/bin:$PATH"
 
 # NodeJS
-ENV NVM_DIR="/home/user/.nvm"
-ENV NODEJS_VERSION=16.14.0
-ENV NODEJS_12_VERSION=12.22.10
-ENV NODEJS_14_VERSION=14.19.0
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-RUN source /home/user/.bashrc && nvm install v${NODEJS_VERSION} && nvm install v${NODEJS_14_VERSION} && nvm install v${NODEJS_12_VERSION} && nvm alias default v$NODEJS_VERSION && nvm use v$NODEJS_VERSION && npm install --global yarn@v1.22.17
-ENV PATH=$NVM_DIR/versions/node/v$NODEJS_VERSION/bin:$PATH
-ENV NODEJS_HOME_12=$NVM_DIR/versions/node/v$NODEJS_12_VERSION
-ENV NODEJS_HOME_14=$NVM_DIR/versions/node/v$NODEJS_14_VERSION
-ENV NODEJS_HOME_16=$NVM_DIR/versions/node/v$NODEJS_VERSION
+# ENV NVM_DIR="/home/user/.nvm"
+# ENV NODEJS_VERSION=16.14.0
+# ENV NODEJS_12_VERSION=12.22.10
+# ENV NODEJS_14_VERSION=14.19.0
+# RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+# RUN source /home/user/.bashrc && nvm install v${NODEJS_VERSION} && nvm install v${NODEJS_14_VERSION} && nvm install v${NODEJS_12_VERSION} && nvm alias default v$NODEJS_VERSION && nvm use v$NODEJS_VERSION && npm install --global yarn@v1.22.17
+# ENV PATH=$NVM_DIR/versions/node/v$NODEJS_VERSION/bin:$PATH
+# ENV NODEJS_HOME_12=$NVM_DIR/versions/node/v$NODEJS_12_VERSION
+# ENV NODEJS_HOME_14=$NVM_DIR/versions/node/v$NODEJS_14_VERSION
+# ENV NODEJS_HOME_16=$NVM_DIR/versions/node/v$NODEJS_VERSION
 
 USER 0
 
 # Required packages for AWT
-RUN dnf install -y libXext libXrender libXtst libXi
+# RUN dnf install -y libXext libXrender libXtst libXi
 
 # Lombok
 ENV LOMBOK_VERSION=1.18.18
 RUN wget -O /usr/local/lib/lombok.jar https://projectlombok.org/downloads/lombok-${LOMBOK_VERSION}.jar
 
 # Scala
-RUN curl -fLo cs https://git.io/coursier-cli && \
-    chmod +x cs && \
-    mv cs /usr/local/bin/
-RUN curl -fLo sbt https://raw.githubusercontent.com/dwijnand/sbt-extras/master/sbt && \
-    chmod +x sbt && \
-    mv sbt /usr/local/bin/
-RUN curl -fLo mill https://raw.githubusercontent.com/lefou/millw/main/millw && \
-    chmod +x mill && \
-    mv mill /usr/local/bin/
+# RUN curl -fLo cs https://git.io/coursier-cli && \
+#     chmod +x cs && \
+#     mv cs /usr/local/bin/
+# RUN curl -fLo sbt https://raw.githubusercontent.com/dwijnand/sbt-extras/master/sbt && \
+#     chmod +x sbt && \
+#     mv sbt /usr/local/bin/
+# RUN curl -fLo mill https://raw.githubusercontent.com/lefou/millw/main/millw && \
+#     chmod +x mill && \
+#     mv mill /usr/local/bin/
     
 # C/CPP
-RUN dnf -y install llvm-toolset gcc gcc-c++ clang clang-libs clang-tools-extra gdb
+# RUN dnf -y install llvm-toolset gcc gcc-c++ clang clang-libs clang-tools-extra gdb
 
 # Go 1.18+    - installed to /usr/bin/go
 # gopls 0.10+ - installed to /home/user/go/bin/gopls and /home/user/go/pkg/mod/
-RUN dnf install -y go-toolset && \
-    GO111MODULE=on go install -v golang.org/x/tools/gopls@latest
+# RUN dnf install -y go-toolset && \
+#     GO111MODULE=on go install -v golang.org/x/tools/gopls@latest
 
 # Python
 RUN dnf -y module enable python39:3.9 && \
@@ -114,39 +114,39 @@ RUN cd /usr/bin \
 RUN pip install pylint yq
 
 # PHP
-ENV PHP_VERSION=7.4
-RUN dnf -y module enable php:$PHP_VERSION && \
-    dnf install -y --setopt=tsflags=nodocs php php-mysqlnd php-pgsql php-bcmath \
-                php-gd php-intl php-json php-ldap php-mbstring php-pdo \
-                php-pear php-zlib php-mysqli php-curl php-xml php-devel\
-                php-process php-soap php-opcache php-fpm ca-certificates \
-                php-gmp php-pecl-xdebug php-pecl-zip mod_ssl hostname && \
-    wget https://getcomposer.org/installer -O /tmp/composer-installer.php && \
-    php /tmp/composer-installer.php --filename=composer --install-dir=/usr/local/bin
+# ENV PHP_VERSION=7.4
+# RUN dnf -y module enable php:$PHP_VERSION && \
+#     dnf install -y --setopt=tsflags=nodocs php php-mysqlnd php-pgsql php-bcmath \
+#                 php-gd php-intl php-json php-ldap php-mbstring php-pdo \
+#                 php-pear php-zlib php-mysqli php-curl php-xml php-devel\
+#                 php-process php-soap php-opcache php-fpm ca-certificates \
+#                 php-gmp php-pecl-xdebug php-pecl-zip mod_ssl hostname && \
+#     wget https://getcomposer.org/installer -O /tmp/composer-installer.php && \
+#     php /tmp/composer-installer.php --filename=composer --install-dir=/usr/local/bin
 
-ENV PHP_DEFAULT_INCLUDE_PATH=/usr/share/pear \
-    PHP_SYSCONF_PATH=/etc \
-    PHP_HTTPD_CONF_FILE=php.conf \
-    HTTPD_MAIN_CONF_PATH=/etc/httpd/conf \
-    HTTPD_MAIN_CONF_D_PATH=/etc/httpd/conf.d \
-    HTTPD_MODULES_CONF_D_PATH=/etc/httpd/conf.modules.d \
-    HTTPD_VAR_RUN=/var/run/httpd \
-    HTTPD_DATA_PATH=/var/www \
-    HTTPD_DATA_ORIG_PATH=/var/www \
-    HTTPD_VAR_PATH=/var
+# ENV PHP_DEFAULT_INCLUDE_PATH=/usr/share/pear \
+#     PHP_SYSCONF_PATH=/etc \
+#     PHP_HTTPD_CONF_FILE=php.conf \
+#     HTTPD_MAIN_CONF_PATH=/etc/httpd/conf \
+#     HTTPD_MAIN_CONF_D_PATH=/etc/httpd/conf.d \
+#     HTTPD_MODULES_CONF_D_PATH=/etc/httpd/conf.modules.d \
+#     HTTPD_VAR_RUN=/var/run/httpd \
+#     HTTPD_DATA_PATH=/var/www \
+#     HTTPD_DATA_ORIG_PATH=/var/www \
+#     HTTPD_VAR_PATH=/var
 
 # .NET
-ENV DOTNET_RPM_VERSION=6.0
-RUN dnf install -y dotnet-hostfxr-${DOTNET_RPM_VERSION} dotnet-runtime-${DOTNET_RPM_VERSION} dotnet-sdk-${DOTNET_RPM_VERSION}
+# ENV DOTNET_RPM_VERSION=6.0
+# RUN dnf install -y dotnet-hostfxr-${DOTNET_RPM_VERSION} dotnet-runtime-${DOTNET_RPM_VERSION} dotnet-sdk-${DOTNET_RPM_VERSION}
 
 # rust
-ENV CARGO_HOME=/home/user/.cargo \
-    RUSTUP_HOME=/home/user/.rustup \
-    PATH=/home/user/.cargo/bin:${PATH}
-RUN curl --proto '=https' --tlsv1.2 -sSfo rustup https://sh.rustup.rs && \
-    chmod +x rustup && \
-    mv rustup /usr/bin/ && \
-    rustup -y --no-modify-path --profile minimal -c rust-src -c rust-analysis -c rls
+# ENV CARGO_HOME=/home/user/.cargo \
+#     RUSTUP_HOME=/home/user/.rustup \
+#     PATH=/home/user/.cargo/bin:${PATH}
+# RUN curl --proto '=https' --tlsv1.2 -sSfo rustup https://sh.rustup.rs && \
+#     chmod +x rustup && \
+#     mv rustup /usr/bin/ && \
+#     rustup -y --no-modify-path --profile minimal -c rust-src -c rust-analysis -c rls
 
 # camel-k
 ENV KAMEL_VERSION 1.11.0
@@ -156,7 +156,7 @@ RUN curl -L https://github.com/apache/camel-k/releases/download/v${KAMEL_VERSION
 # Cloud
 
 # oc
-ENV OC_VERSION=4.12.0
+ENV OC_VERSION=4.12.9
 RUN curl -L https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${OC_VERSION}/openshift-client-linux.tar.gz | tar -C /usr/local/bin -xz \
     && chmod +x /usr/local/bin/oc
 
@@ -257,7 +257,7 @@ RUN <<EOF
 set -euf -o pipefail
 TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
-HELM_VERSION="3.7.0"
+HELM_VERSION="3.11.3"
 HELM_ARCH="linux-amd64"
 HELM_TGZ="helm-v${HELM_VERSION}-${HELM_ARCH}.tar.gz"
 HELM_TGZ_URL="https://get.helm.sh/${HELM_TGZ}"
@@ -275,7 +275,7 @@ RUN <<EOF
 set -euf -o pipefail
 TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
-KUSTOMIZE_VERSION="4.3.0"
+KUSTOMIZE_VERSION="4.5.6"
 KUSTOMIZE_ARCH="linux_amd64"
 KUSTOMIZE_TGZ="kustomize_v${KUSTOMIZE_VERSION}_${KUSTOMIZE_ARCH}.tar.gz"
 KUSTOMIZE_TGZ_URL="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/${KUSTOMIZE_TGZ}"
@@ -329,67 +329,67 @@ rm -rf "${TEMP_DIR}"
 EOF
 
 ## terraform-cli
-RUN <<EOF
-set -euf -o pipefail
-TEMP_DIR="$(mktemp -d)"
-cd "${TEMP_DIR}"
-TF_VERSION="1.0.7"
-TF_ARCH="linux_amd64"
-TF_ZIP="terraform_${TF_VERSION}_${TF_ARCH}.zip"
-TF_ZIP_URL="https://releases.hashicorp.com/terraform/${TF_VERSION}/${TF_ZIP}"
-TF_CHEKSUMS_URL="https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS"
-curl -sSLO "${TF_ZIP_URL}"
-curl -sSLO "${TF_CHEKSUMS_URL}"
-sha256sum --ignore-missing -c "terraform_${TF_VERSION}_SHA256SUMS" 2>&1 | grep OK
-unzip ${TF_ZIP}
-chmod +x terraform 
-mv terraform /usr/local/bin
-cd -
-rm -rf "${TEMP_DIR}"
-EOF
+# RUN <<EOF
+# set -euf -o pipefail
+# TEMP_DIR="$(mktemp -d)"
+# cd "${TEMP_DIR}"
+# TF_VERSION="1.0.7"
+# TF_ARCH="linux_amd64"
+# TF_ZIP="terraform_${TF_VERSION}_${TF_ARCH}.zip"
+# TF_ZIP_URL="https://releases.hashicorp.com/terraform/${TF_VERSION}/${TF_ZIP}"
+# TF_CHEKSUMS_URL="https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS"
+# curl -sSLO "${TF_ZIP_URL}"
+# curl -sSLO "${TF_CHEKSUMS_URL}"
+# sha256sum --ignore-missing -c "terraform_${TF_VERSION}_SHA256SUMS" 2>&1 | grep OK
+# unzip ${TF_ZIP}
+# chmod +x terraform 
+# mv terraform /usr/local/bin
+# cd -
+# rm -rf "${TEMP_DIR}"
+# EOF
 
 ## docker
-RUN <<EOF
-set -euf -o pipefail
-TEMP_DIR="$(mktemp -d)"
-cd "${TEMP_DIR}"
-DOCKER_VERSION="20.10.8"
-DOCKER_ARCH="x86_64"
-DOCKER_TGZ="docker-${DOCKER_VERSION}.tgz"
-DOCKER_TGZ_URL="https://download.docker.com/linux/static/stable/${DOCKER_ARCH}/${DOCKER_TGZ}"
-curl -sSLO "${DOCKER_TGZ_URL}"
-tar -zxvf "${DOCKER_TGZ}"
-mv docker/docker-proxy \
-    docker/containerd \
-    docker/dockerd \
-    docker/docker \
-    docker/containerd-shim-runc-v2 \
-    docker/ctr \
-    docker/docker-init \
-    docker/runc \
-    docker/containerd-shim \
-    /usr/local/bin/
-cd -
-rm -rf "${TEMP_DIR}"
-EOF
+# RUN <<EOF
+# set -euf -o pipefail
+# TEMP_DIR="$(mktemp -d)"
+# cd "${TEMP_DIR}"
+# DOCKER_VERSION="20.10.8"
+# DOCKER_ARCH="x86_64"
+# DOCKER_TGZ="docker-${DOCKER_VERSION}.tgz"
+# DOCKER_TGZ_URL="https://download.docker.com/linux/static/stable/${DOCKER_ARCH}/${DOCKER_TGZ}"
+# curl -sSLO "${DOCKER_TGZ_URL}"
+# tar -zxvf "${DOCKER_TGZ}"
+# mv docker/docker-proxy \
+#     docker/containerd \
+#     docker/dockerd \
+#     docker/docker \
+#     docker/containerd-shim-runc-v2 \
+#     docker/ctr \
+#     docker/docker-init \
+#     docker/runc \
+#     docker/containerd-shim \
+#     /usr/local/bin/
+# cd -
+# rm -rf "${TEMP_DIR}"
+# EOF
 
 ## compose
-RUN <<EOF
-set -euf -o pipefail
-TEMP_DIR="$(mktemp -d)"
-cd "${TEMP_DIR}"
-COMPOSE_VERSION="1.29.2"
-COMPOSE_ARCH="Linux-x86_64"
-COMPOSE_BIN="docker-compose-${COMPOSE_ARCH}"
-COMPOSE_BIN_URL="https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/${COMPOSE_BIN}"
-curl -sSLO "${COMPOSE_BIN_URL}"
-curl -sSLO "${COMPOSE_BIN_URL}.sha256"
-sha256sum -c "${COMPOSE_BIN}.sha256" 2>&1 | grep OK
-chmod +x "${COMPOSE_BIN}"
-mv "${COMPOSE_BIN}" /usr/local/bin/docker-compose
-cd -
-rm -rf "${TEMP_DIR}"
-EOF
+# RUN <<EOF
+# set -euf -o pipefail
+# TEMP_DIR="$(mktemp -d)"
+# cd "${TEMP_DIR}"
+# COMPOSE_VERSION="1.29.2"
+# COMPOSE_ARCH="Linux-x86_64"
+# COMPOSE_BIN="docker-compose-${COMPOSE_ARCH}"
+# COMPOSE_BIN_URL="https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/${COMPOSE_BIN}"
+# curl -sSLO "${COMPOSE_BIN_URL}"
+# curl -sSLO "${COMPOSE_BIN_URL}.sha256"
+# sha256sum -c "${COMPOSE_BIN}.sha256" 2>&1 | grep OK
+# chmod +x "${COMPOSE_BIN}"
+# mv "${COMPOSE_BIN}" /usr/local/bin/docker-compose
+# cd -
+# rm -rf "${TEMP_DIR}"
+# EOF
 
 # e2fsprogs setup
 # Since e2fsprogs-static package has removed RHEL 8 distribution, it is not possible to install from the repository
