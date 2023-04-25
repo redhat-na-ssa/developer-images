@@ -1,7 +1,8 @@
 # syntax=docker/dockerfile:1.3-labs
 
 # updateBaseImages.sh can't operate on SHA-based tags as they're not date-based or semver-sequential, and therefore cannot be ordered
-FROM quay.io/devfile/base-developer-image:ubi8-latest
+# FROM quay.io/devfile/base-developer-image:ubi8-latest
+FROM quay.io/redhat_na_ssa/base-developer-image:ubi8-latest
 LABEL maintainer="Red Hat, Inc."
 
 LABEL com.redhat.component="devfile-universal-container"
@@ -24,11 +25,11 @@ RUN curl -fsSL "https://get.sdkman.io" | bash \
     && bash -c ". /home/user/.sdkman/bin/sdkman-init.sh \
              && sed -i "s/sdkman_auto_answer=false/sdkman_auto_answer=true/g" /home/user/.sdkman/etc/config \
 	         && sed -i "s/sdkman_auto_env=false/sdkman_auto_env=true/g" /home/user/.sdkman/etc/config \
-             && sdk install java 8.0.332-tem \
-             && sdk install java 11.0.15-tem \
+             && sdk install java 8.0.345-tem \
+             && sdk install java 11.0.19-tem \
              && sdk install java 17.0.7-tem \
              && sdk install java 22.1.0.0.r17-mandrel \
-             && sdk default java 11.0.15-tem \
+             && sdk default java 11.0.19-tem \
              && sdk install gradle \
              && sdk install maven \
              && sdk install jbang \
@@ -36,9 +37,9 @@ RUN curl -fsSL "https://get.sdkman.io" | bash \
              && sdk flush temp"
 
 # sdk home java <version>
-ENV JAVA_HOME_8=/home/user/.sdkman/candidates/java/8.0.332-tem
-ENV JAVA_HOME_11=/home/user/.sdkman/candidates/java/11.0.15-tem
-ENV JAVA_HOME_17=/home/user/.sdkman/candidates/java/17.0.3-tem
+ENV JAVA_HOME_8=/home/user/.sdkman/candidates/java/8.0.345-tem
+ENV JAVA_HOME_11=/home/user/.sdkman/candidates/java/11.0.19-tem
+ENV JAVA_HOME_17=/home/user/.sdkman/candidates/java/17.0.7-tem
 
 # Java-related environment variables are described and set by /home/user/.bashrc
 # To make Java working for dash and other shells, it needs to initialize them in the Dockerfile.
@@ -61,16 +62,16 @@ ENV PATH="/home/user/.sdkman/candidates/gradle/current/bin:$PATH"
 ENV PATH="/home/user/.local/share/coursier/bin:$PATH"
 
 # NodeJS
-# ENV NVM_DIR="/home/user/.nvm"
-# ENV NODEJS_VERSION=16.14.0
-# ENV NODEJS_12_VERSION=12.22.10
-# ENV NODEJS_14_VERSION=14.19.0
-# RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-# RUN source /home/user/.bashrc && nvm install v${NODEJS_VERSION} && nvm install v${NODEJS_14_VERSION} && nvm install v${NODEJS_12_VERSION} && nvm alias default v$NODEJS_VERSION && nvm use v$NODEJS_VERSION && npm install --global yarn@v1.22.17
-# ENV PATH=$NVM_DIR/versions/node/v$NODEJS_VERSION/bin:$PATH
-# ENV NODEJS_HOME_12=$NVM_DIR/versions/node/v$NODEJS_12_VERSION
-# ENV NODEJS_HOME_14=$NVM_DIR/versions/node/v$NODEJS_14_VERSION
-# ENV NODEJS_HOME_16=$NVM_DIR/versions/node/v$NODEJS_VERSION
+ENV NVM_DIR="/home/user/.nvm"
+ENV NODEJS_VERSION=16.14.0
+ENV NODEJS_12_VERSION=12.22.10
+ENV NODEJS_14_VERSION=14.19.0
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+RUN source /home/user/.bashrc && nvm install v${NODEJS_VERSION} && nvm install v${NODEJS_14_VERSION} && nvm install v${NODEJS_12_VERSION} && nvm alias default v$NODEJS_VERSION && nvm use v$NODEJS_VERSION && npm install --global yarn@v1.22.17
+ENV PATH=$NVM_DIR/versions/node/v$NODEJS_VERSION/bin:$PATH
+ENV NODEJS_HOME_12=$NVM_DIR/versions/node/v$NODEJS_12_VERSION
+ENV NODEJS_HOME_14=$NVM_DIR/versions/node/v$NODEJS_14_VERSION
+ENV NODEJS_HOME_16=$NVM_DIR/versions/node/v$NODEJS_VERSION
 
 USER 0
 
@@ -93,7 +94,7 @@ RUN wget -O /usr/local/lib/lombok.jar https://projectlombok.org/downloads/lombok
 #     mv mill /usr/local/bin/
     
 # C/CPP
-# RUN dnf -y install llvm-toolset gcc gcc-c++ clang clang-libs clang-tools-extra gdb
+RUN dnf -y install llvm-toolset gcc gcc-c++ clang clang-libs clang-tools-extra gdb
 
 # Go 1.18+    - installed to /usr/bin/go
 # gopls 0.10+ - installed to /home/user/go/bin/gopls and /home/user/go/pkg/mod/
@@ -149,7 +150,7 @@ RUN pip install pylint yq
 #     rustup -y --no-modify-path --profile minimal -c rust-src -c rust-analysis -c rls
 
 # camel-k
-ENV KAMEL_VERSION 1.11.0
+ENV KAMEL_VERSION 1.12.0
 RUN curl -L https://github.com/apache/camel-k/releases/download/v${KAMEL_VERSION}/camel-k-client-${KAMEL_VERSION}-linux-64bit.tar.gz | tar -C /usr/local/bin -xz \
     && chmod +x /usr/local/bin/kamel
 
@@ -207,21 +208,21 @@ echo '[ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases' >> /home/user/.bas
 EOF
 
 ## shellcheck
-RUN <<EOF
-dnf install -y xz
-set -euf -o pipefail
-TEMP_DIR="$(mktemp -d)"
-cd "${TEMP_DIR}"
-SHELL_CHECK_VERSION="0.8.0"
-SHELL_CHECK_ARCH="x86_64"
-SHELL_CHECK_TGZ="shellcheck-v${SHELL_CHECK_VERSION}.linux.${SHELL_CHECK_ARCH}.tar.xz"
-SHELL_CHECK_TGZ_URL="https://github.com/koalaman/shellcheck/releases/download/v${SHELL_CHECK_VERSION}/${SHELL_CHECK_TGZ}"
-curl -sSLO "${SHELL_CHECK_TGZ_URL}"
-tar -xvf "${SHELL_CHECK_TGZ}"
-mv "${TEMP_DIR}"/shellcheck-v${SHELL_CHECK_VERSION}/shellcheck /bin/shellcheck
-cd -
-rm -rf "${TEMP_DIR}"
-EOF
+# RUN <<EOF
+# dnf install -y xz
+# set -euf -o pipefail
+# TEMP_DIR="$(mktemp -d)"
+# cd "${TEMP_DIR}"
+# SHELL_CHECK_VERSION="0.8.0"
+# SHELL_CHECK_ARCH="x86_64"
+# SHELL_CHECK_TGZ="shellcheck-v${SHELL_CHECK_VERSION}.linux.${SHELL_CHECK_ARCH}.tar.xz"
+# SHELL_CHECK_TGZ_URL="https://github.com/koalaman/shellcheck/releases/download/v${SHELL_CHECK_VERSION}/${SHELL_CHECK_TGZ}"
+# curl -sSLO "${SHELL_CHECK_TGZ_URL}"
+# tar -xvf "${SHELL_CHECK_TGZ}"
+# mv "${TEMP_DIR}"/shellcheck-v${SHELL_CHECK_VERSION}/shellcheck /bin/shellcheck
+# cd -
+# rm -rf "${TEMP_DIR}"
+# EOF
 
 ## krew
 RUN <<EOF
@@ -409,7 +410,7 @@ tar -zxvf "${E2FSPROGS_TGZ}"
 cd "e2fsprogs-${E2FSPROGS_VERSION}"
 mkdir build
 cd build
-../configure --prefix=/usr --with-root-prefix="" --enable-elf-shlibs --disable-evms
+../configure --prefix=/usr --with-root-prefix="" --enable-elf-shlibs #--disable-evms
 make
 make install
 make install-libs
