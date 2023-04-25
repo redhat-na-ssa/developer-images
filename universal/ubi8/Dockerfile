@@ -28,7 +28,6 @@ RUN curl -fsSL "https://get.sdkman.io" | bash \
              && sdk install java 8.0.345-tem \
              && sdk install java 11.0.19-tem \
              && sdk install java 17.0.7-tem \
-             && sdk install java 22.1.0.0.r17-mandrel \
              && sdk default java 11.0.19-tem \
              && sdk install gradle \
              && sdk install maven \
@@ -53,7 +52,7 @@ ENV GRADLE_HOME="/home/user/.sdkman/candidates/gradle/current"
 ENV JAVA_HOME="/home/user/.sdkman/candidates/java/current"
 ENV MAVEN_HOME="/home/user/.sdkman/candidates/maven/current"
 
-ENV GRAALVM_HOME=/home/user/.sdkman/candidates/java/22.1.0.0.r17-mandrel
+# ENV GRAALVM_HOME=/home/user/.sdkman/candidates/java/22.1.0.0.r17-mandrel
 
 ENV PATH="/home/user/.krew/bin:$PATH"
 ENV PATH="/home/user/.sdkman/candidates/maven/current/bin:$PATH"
@@ -76,7 +75,7 @@ ENV NODEJS_HOME_16=$NVM_DIR/versions/node/v$NODEJS_VERSION
 USER 0
 
 # Required packages for AWT
-# RUN dnf install -y libXext libXrender libXtst libXi
+RUN dnf install -y libXext libXrender libXtst libXi
 
 # Lombok
 ENV LOMBOK_VERSION=1.18.18
@@ -94,7 +93,7 @@ RUN wget -O /usr/local/lib/lombok.jar https://projectlombok.org/downloads/lombok
 #     mv mill /usr/local/bin/
     
 # C/CPP
-RUN dnf -y install llvm-toolset gcc gcc-c++ clang clang-libs clang-tools-extra gdb
+# RUN dnf -y install llvm-toolset gcc gcc-c++ clang clang-libs clang-tools-extra gdb
 
 # Go 1.18+    - installed to /usr/bin/go
 # gopls 0.10+ - installed to /home/user/go/bin/gopls and /home/user/go/pkg/mod/
@@ -102,15 +101,16 @@ RUN dnf -y install llvm-toolset gcc gcc-c++ clang clang-libs clang-tools-extra g
 #     GO111MODULE=on go install -v golang.org/x/tools/gopls@latest
 
 # Python
-RUN dnf -y module enable python39:3.9 && \
-    dnf -y update && \
-    dnf -y install python39 python39-devel python39-setuptools python39-pip nss_wrapper
+# RUN dnf -y module enable python39:3.9 && \
+#     dnf -y update &&
+#     dnf -y install python39 python39-devel python39-setuptools python39-pip nss_wrapper
+RUN dnf -y install python3-devel python3-setuptools python3-pip nss_wrapper
 
 RUN cd /usr/bin \
-    && if [ ! -L python ]; then ln -s python3.9 python; fi \
-    && if [ ! -L pydoc ]; then ln -s pydoc3.9 pydoc; fi \
-    && if [ ! -L python-config ]; then ln -s python3.9-config python-config; fi \
-    && if [ ! -L pip ]; then ln -s pip-3.9 pip; fi
+    && if [ ! -L python ]; then ln -s python3.6 python; fi \
+    && if [ ! -L pydoc ]; then ln -s pydoc3.6 pydoc; fi \
+    && if [ ! -L python-config ]; then ln -s python3.6-config python-config; fi \
+    && if [ ! -L pip ]; then ln -s pip-3.6 pip; fi
 
 RUN pip install pylint yq
 
@@ -165,7 +165,8 @@ RUN curl -L https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${OC_VERSI
 RUN dnf -y module enable container-tools:rhel8 && \ 
     dnf -y update && \
     dnf -y reinstall shadow-utils && \
-    dnf -y install podman buildah skopeo fuse-overlayfs
+    dnf -y install podman buildah skopeo fuse-overlayfs && \
+    dnf clean all --enablerepo=\*
 
 # Set up environment variables to note that this is
 # not starting with usernamespace and default to
@@ -395,33 +396,33 @@ EOF
 # e2fsprogs setup
 # Since e2fsprogs-static package has removed RHEL 8 distribution, it is not possible to install from the repository
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/considerations_in_adopting_rhel_8/index#removed-packages_changes-to-packages
-RUN <<EOF
-set -euf -o pipefail
-TEMP_DIR="$(mktemp -d)"
-cd "${TEMP_DIR}"
-E2FSPROGS_VERSION="1.46.5"
-E2FSPROGS_TGZ="e2fsprogs-${E2FSPROGS_VERSION}.tar.gz"
-E2FSPROGS_TGZ_URL="https://mirrors.edge.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${E2FSPROGS_VERSION}/${E2FSPROGS_TGZ}"
-E2FSPROGS_CHEKSUMS_URL="https://mirrors.edge.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${E2FSPROGS_VERSION}/sha256sums.asc"
-curl -sSLO "${E2FSPROGS_TGZ_URL}"
-curl -sSLO "${E2FSPROGS_CHEKSUMS_URL}"
-sha256sum --ignore-missing -c "sha256sums.asc" 2>&1 | grep OK
-tar -zxvf "${E2FSPROGS_TGZ}"
-cd "e2fsprogs-${E2FSPROGS_VERSION}"
-mkdir build
-cd build
-../configure --prefix=/usr --with-root-prefix="" --enable-elf-shlibs #--disable-evms
-make
-make install
-make install-libs
-cd -
-rm -rf "${TEMP_DIR}"
-EOF
+# RUN <<EOF
+# set -euf -o pipefail
+# TEMP_DIR="$(mktemp -d)"
+# cd "${TEMP_DIR}"
+# E2FSPROGS_VERSION="1.47.0"
+# E2FSPROGS_TGZ="e2fsprogs-${E2FSPROGS_VERSION}.tar.gz"
+# E2FSPROGS_TGZ_URL="https://mirrors.edge.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${E2FSPROGS_VERSION}/${E2FSPROGS_TGZ}"
+# E2FSPROGS_CHEKSUMS_URL="https://mirrors.edge.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${E2FSPROGS_VERSION}/sha256sums.asc"
+# curl -sSLO "${E2FSPROGS_TGZ_URL}"
+# curl -sSLO "${E2FSPROGS_CHEKSUMS_URL}"
+# sha256sum --ignore-missing -c "sha256sums.asc" 2>&1 | grep OK
+# tar -zxvf "${E2FSPROGS_TGZ}"
+# cd "e2fsprogs-${E2FSPROGS_VERSION}"
+# mkdir build
+# cd build
+# ../configure --prefix=/usr --with-root-prefix="" --enable-elf-shlibs --disable-evms
+# make
+# make install
+# make install-libs
+# cd -
+# rm -rf "${TEMP_DIR}"
+# EOF
 
 # Set permissions on /etc/passwd and /home to allow arbitrary users to write
 RUN mkdir -p /home/user && chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home
 
 # cleanup dnf cache
-RUN dnf -y clean all --enablerepo='*'
+# RUN dnf -y clean all --enablerepo=\*
 
 USER 10001
