@@ -3,7 +3,7 @@
 # updateBaseImages.sh can't operate on SHA-based tags as they're not date-based or semver-sequential, and therefore cannot be ordered
 # FROM quay.io/devfile/base-developer-image:ubi8-latest
 FROM quay.io/redhat_na_ssa/base-developer-image:ubi8-latest
-LABEL maintainer="(Red Hat NA Specialist Solution Architects)"
+LABEL maintainer="Red Hat NA Specialist Solution Architects"
 
 LABEL com.redhat.component="devfile-universal-container"
 LABEL name="redhat_na_ssa/universal-developer-image"
