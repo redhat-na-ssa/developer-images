@@ -1,11 +1,11 @@
 # syntax=docker/dockerfile:1.3-labs
 
 # https://registry.access.redhat.com/ubi8/ubi
-FROM registry.access.redhat.com/ubi8/ubi:8.7-1112
-LABEL maintainer="Red Hat, Inc."
+FROM registry.access.redhat.com/ubi8/ubi:8.8-1032
+LABEL maintainer="(Red Hat NA Specialist Solution Architects)"
 
 LABEL com.redhat.component="devfile-base-container"
-LABEL name="devfile/base-developer-image"
+LABEL name="redhat_na_ssa/base-developer-image"
 LABEL version="ubi8"
 
 #label for EULA
@@ -21,7 +21,7 @@ USER 0
 
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
     dnf update -y && \
-    dnf install -y bash curl diffutils git git-lfs iproute jq less lsof man nano procps p7zip p7zip-plugins \
+    dnf install -y bash curl diffutils git git-lfs iproute jq less lsof procps p7zip p7zip-plugins \
                    perl-Digest-SHA net-tools openssh-clients rsync socat sudo time vim wget zip && \
                    dnf clean all
 

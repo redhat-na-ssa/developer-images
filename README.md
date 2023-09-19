@@ -34,8 +34,6 @@ $ docker run -ti --rm \
 | `htop`              |`NOT AVAILABLE (fedora only)`        |
 | `less`              |`less`                               |
 | `lsof`              |`lsof`                               |
-| `man`               |`man`                                |
-| `nano`              |`nano`                               |
 | `netcat`            |`NOT AVAILABLE`                      |
 | `netstat`           |`net-tools`                          |
 | `openssh-client`    |`openssh-clients`                    |
@@ -81,41 +79,20 @@ docker run -ti --rm \
 | `java`              |`<8.0.332-tem via sdkman>`          |
 | `java`              |`<11.0.15-tem via sdkman>/default`  |
 | `java`              |`<17.0.3-tem via sdkman>`           |
+| `java`              |`<21-open via sdkman>`           |
 | `maven`             |`<via sdkman>`                       |
 | `gradle`            |`<via sdkman>`                       |
-| `mandrel`           |`<22.1.0.0.r17-mandrel via sdkman>`  |
 | `jbang`             |`<via sdkman>`                    |
-|--------SCALA--------|-------------------------------------|
-| `cs`                |`<https://get-coursier.io/>`         |
-| `sbt`               |`<sbt launch script>`                |
-| `mill`              |`<mill launch script>`               |
-|--------C/CPP--------|-------------------------------------|
-| `clang`             |`clang`                              |
-| `clangd`            |`llvm-toolset`                       |
-| `gdb`               |`gdb`                                |
-|--------PHP----------|-------------------------------------|
-| `php`               |`php`                                |
-| `composer`          |`https://getcomposer.org/`           |
-| `xdebug`            |`pecl`                               |
 |-------NODEJS--------|-------------------------------------|
 | `nodejs`            |`nodejs`                             |
 | `npm`               |`npm`                                |
 | `yarn`              |`<via npm>`                          |
-|--------GO-----------|-------------------------------------|
-| `go`                |`go-toolset`                         |
-| `gopls`             |`golang.org/x/tools/gopls`           |
-|--------.NET---------|-------------------------------------|
-| `dotnet`            |`dotnet-sdk-6.0`                     |
 |------PYTHON---------|-------------------------------------|
 | `python`            |`python39`                           |
 | `setuptools`        |`python39-setuptools`                |
 | `pip`               |`python39-pip`                       |
 | `pylint`            |`<via pip>`                          |
 | `yq`                |`<via pip>`                          |
-|--------RUST---------|-------------------------------------|
-| `rustup`            |`<sh.rustup.rs>`                     |
-| `rust-src`          |`<via rustup>`                       |
-| `rust-analysis`     |`<via rustup>`                       |
 |--------Platform-----|-------------------------------------|
 | `camel-k`           |`<gh release>`                       |
 |------CLOUD----------|-------------------------------------|
@@ -129,20 +106,16 @@ docker run -ti --rm \
 | `kustomize`         |`<gh releases>`                      |
 | `tkn`               |`<gh releases>`                      |
 | `kn`                |`<gh releases>`                      |
-| `terraform`         |`<releases.hashicorp.com>`           |
-| `docker`            |`<download.docker.com>`              |
-| `docker-compose`    |`<gh releases>`                      |
-| `kamel`            |`<gh release>`                     |
+| `kamel`             |`<gh release>`                       |
 | **TOTAL SIZE**      | **8.75GB** (3.6GB compressed)       |
 
 ### Included libraries
 
-#### e2fsprogs v1.46.5
-
+N/A
 ### Environment Variables
 
 #### Java
-JAVA_HOME_8, JAVA_HOME_11, JAVA_HOME_17
+JAVA_HOME_8, JAVA_HOME_11, JAVA_HOME_17, JAVA_HOME_21
 
 # Builds
 

@@ -3,10 +3,10 @@
 # updateBaseImages.sh can't operate on SHA-based tags as they're not date-based or semver-sequential, and therefore cannot be ordered
 # FROM quay.io/devfile/base-developer-image:ubi8-latest
 FROM quay.io/redhat_na_ssa/base-developer-image:ubi8-latest
-LABEL maintainer="Red Hat, Inc."
+LABEL maintainer="(Red Hat NA Specialist Solution Architects)"
 
 LABEL com.redhat.component="devfile-universal-container"
-LABEL name="devfile/universal-developer-image"
+LABEL name="redhat_na_ssa/universal-developer-image"
 LABEL version="ubi8"
 
 #label for EULA
@@ -28,6 +28,7 @@ RUN curl -fsSL "https://get.sdkman.io" | bash \
              && sdk install java 8.0.345-tem \
              && sdk install java 11.0.19-tem \
              && sdk install java 17.0.7-tem \
+             && sdk install java 21-open \
              && sdk default java 11.0.19-tem \
              && sdk install gradle \
              && sdk install maven \
@@ -39,6 +40,7 @@ RUN curl -fsSL "https://get.sdkman.io" | bash \
 ENV JAVA_HOME_8=/home/user/.sdkman/candidates/java/8.0.345-tem
 ENV JAVA_HOME_11=/home/user/.sdkman/candidates/java/11.0.19-tem
 ENV JAVA_HOME_17=/home/user/.sdkman/candidates/java/17.0.7-tem
+ENV JAVA_HOME_21=/home/user/.sdkman/candidates/java/21-open
 
 # Java-related environment variables are described and set by /home/user/.bashrc
 # To make Java working for dash and other shells, it needs to initialize them in the Dockerfile.
@@ -78,7 +80,7 @@ USER 0
 RUN dnf install -y libXext libXrender libXtst libXi
 
 # Lombok
-ENV LOMBOK_VERSION=1.18.18
+ENV LOMBOK_VERSION=1.18.28
 RUN wget -O /usr/local/lib/lombok.jar https://projectlombok.org/downloads/lombok-${LOMBOK_VERSION}.jar
 
 # Scala
@@ -101,16 +103,15 @@ RUN wget -O /usr/local/lib/lombok.jar https://projectlombok.org/downloads/lombok
 #     GO111MODULE=on go install -v golang.org/x/tools/gopls@latest
 
 # Python
-# RUN dnf -y module enable python39:3.9 && \
-#     dnf -y update &&
-#     dnf -y install python39 python39-devel python39-setuptools python39-pip nss_wrapper
-RUN dnf -y install python3-devel python3-setuptools python3-pip nss_wrapper
+RUN dnf -y module enable python39:3.9 && \
+    dnf -y update && \
+    dnf -y install python39 python39-devel python39-setuptools python39-pip nss_wrapper
 
 RUN cd /usr/bin \
-    && if [ ! -L python ]; then ln -s python3.6 python; fi \
-    && if [ ! -L pydoc ]; then ln -s pydoc3.6 pydoc; fi \
-    && if [ ! -L python-config ]; then ln -s python3.6-config python-config; fi \
-    && if [ ! -L pip ]; then ln -s pip-3.6 pip; fi
+    && if [ ! -L python ]; then ln -s python3.9 python; fi \
+    && if [ ! -L pydoc ]; then ln -s pydoc3.9 pydoc; fi \
+    && if [ ! -L python-config ]; then ln -s python3.9-config python-config; fi \
+    && if [ ! -L pip ]; then ln -s pip-3.9 pip; fi
 
 RUN pip install pylint yq
 
@@ -150,16 +151,21 @@ RUN pip install pylint yq
 #     rustup -y --no-modify-path --profile minimal -c rust-src -c rust-analysis -c rls
 
 # camel-k
-ENV KAMEL_VERSION 1.12.0
-RUN curl -L https://github.com/apache/camel-k/releases/download/v${KAMEL_VERSION}/camel-k-client-${KAMEL_VERSION}-linux-64bit.tar.gz | tar -C /usr/local/bin -xz \
+ENV KAMEL_VERSION 2.0.1
+RUN curl -L https://github.com/apache/camel-k/releases/download/v${KAMEL_VERSION}/camel-k-client-${KAMEL_VERSION}-linux-amd64.tar.gz | tar -C /usr/local/bin -xz \
     && chmod +x /usr/local/bin/kamel
+
+# git completion
+RUN echo "source /usr/share/bash-completion/completions/git" >> /home/user/.bashrc
 
 # Cloud
 
 # oc
-ENV OC_VERSION=4.12.9
+ENV OC_VERSION=stable
 RUN curl -L https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${OC_VERSION}/openshift-client-linux.tar.gz | tar -C /usr/local/bin -xz \
-    && chmod +x /usr/local/bin/oc
+    && chmod +x /usr/local/bin/oc \
+    && oc completion bash > /usr/share/bash-completion/completions/oc \
+    && echo "source /usr/share/bash-completion/completions/oc" >> /home/user/.bashrc
 
 ## podman buildah skopeo
 RUN dnf -y module enable container-tools:rhel8 && \ 
@@ -189,6 +195,15 @@ RUN mkdir -p /var/lib/shared/overlay-images /var/lib/shared/overlay-layers; \
 RUN mkdir -p "${HOME}"/.config/containers && \
    (echo '[storage]';echo 'driver = "vfs"') > "${HOME}"/.config/containers/storage.conf
 
+# Install kubedock
+ENV KUBEDOCK_VERSION 0.13.0
+RUN curl -L https://github.com/joyrex2001/kubedock/releases/download/${KUBEDOCK_VERSION}/kubedock_${KUBEDOCK_VERSION}_linux_amd64.tar.gz | tar -C /usr/local/bin -xz \
+    && chmod +x /usr/local/bin/kubedock
+
+# Configure the podman wrapper
+COPY --chown=0:0 podman-wrapper.sh /usr/bin/podman.wrapper
+RUN mv /usr/bin/podman /usr/bin/podman.orig
+
 ## kubectl
 RUN <<EOF
 set -euf -o pipefail
@@ -203,10 +218,14 @@ repo_gpgcheck=1
 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 EOF2
 
-dnf install -y kubectl
+dnf install -y kubectl \n \
 curl -sSL -o ~/.kubectl_aliases https://raw.githubusercontent.com/ahmetb/kubectl-alias/master/.kubectl_aliases
-echo '[ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases' >> /home/user/.bashrc
+echo "[ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases" >> /home/user/.bashrc
 EOF
+
+# kubectl completion
+RUN kubectl completion bash > /usr/share/bash-completion/completions/kubectl \
+    && echo "source /usr/share/bash-completion/completions/kubectl" >> /home/user/.bashrc
 
 ## shellcheck
 # RUN <<EOF
@@ -230,7 +249,7 @@ RUN <<EOF
 set -euf -o pipefail
 TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
-KREW_VERSION="0.4.2"
+KREW_VERSION="0.4.4"
 KREW_ARCH="linux_amd64"
 KREW_TGZ="krew-${KREW_ARCH}.tar.gz"
 KREW_TGZ_URL="https://github.com/kubernetes-sigs/krew/releases/download/v${KREW_VERSION}/${KREW_TGZ}"
@@ -259,7 +278,7 @@ RUN <<EOF
 set -euf -o pipefail
 TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
-HELM_VERSION="3.11.3"
+HELM_VERSION="3.12.3"
 HELM_ARCH="linux-amd64"
 HELM_TGZ="helm-v${HELM_VERSION}-${HELM_ARCH}.tar.gz"
 HELM_TGZ_URL="https://get.helm.sh/${HELM_TGZ}"
@@ -277,7 +296,7 @@ RUN <<EOF
 set -euf -o pipefail
 TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
-KUSTOMIZE_VERSION="4.5.6"
+KUSTOMIZE_VERSION="5.1.1"
 KUSTOMIZE_ARCH="linux_amd64"
 KUSTOMIZE_TGZ="kustomize_v${KUSTOMIZE_VERSION}_${KUSTOMIZE_ARCH}.tar.gz"
 KUSTOMIZE_TGZ_URL="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/${KUSTOMIZE_TGZ}"
@@ -296,7 +315,7 @@ RUN <<EOF
 set -euf -o pipefail
 TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
-TKN_VERSION="0.30.1"
+TKN_VERSION="0.32.0"
 TKN_ARCH="Linux_x86_64"
 TKN_TGZ="tkn_${TKN_VERSION}_${TKN_ARCH}.tar.gz"
 TKN_TGZ_URL="https://github.com/tektoncd/cli/releases/download/v${TKN_VERSION}/${TKN_TGZ}"
@@ -315,7 +334,7 @@ RUN <<EOF
 set -euf -o pipefail
 TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
-KN_VERSION="1.9.2"
+KN_VERSION="1.11.0"
 KN_ARCH="linux-amd64"
 KN_BIN="kn-${KN_ARCH}"
 KN_BIN_URL="https://github.com/knative/client/releases/download/knative-v${KN_VERSION}/${KN_BIN}"
@@ -419,10 +438,12 @@ EOF
 # rm -rf "${TEMP_DIR}"
 # EOF
 
-# Set permissions on /etc/passwd and /home to allow arbitrary users to write
-RUN mkdir -p /home/user && chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home
+# Set permissions on /etc/passwd, /home, /etc/hosts to allow arbitrary users to write
+RUN mkdir -p /home/user && chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/hosts /etc/group /home
 
 # cleanup dnf cache
 # RUN dnf -y clean all --enablerepo=\*
+
+COPY --chown=0:0 entrypoint.sh /
 
 USER 10001
