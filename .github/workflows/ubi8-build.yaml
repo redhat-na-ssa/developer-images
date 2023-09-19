@@ -17,7 +17,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            quay.io/devfile/base-developer-image
+            quay.io/redhat_na_ssa/base-developer-image
           flavor: |
             latest=true
             prefix=ubi8-,onlatest=true
@@ -40,7 +40,7 @@ jobs:
           provenance: false
           context: base/ubi8
           tags: |
-            quay.io/devfile/base-developer-image:latest
+            quay.io/redhat_na_ssa/base-developer-image:latest
             ${{ steps.meta.outputs.tags }}
 
   build_universal_ubi8_image:
@@ -55,7 +55,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            quay.io/devfile/universal-developer-image
+            quay.io/redhat_na_ssa/universal-developer-image
           flavor: |
             latest=true
             prefix=ubi8-,onlatest=true
@@ -78,5 +78,5 @@ jobs:
           provenance: false
           context: universal/ubi8
           tags: |
-            quay.io/devfile/universal-developer-image:latest
+            quay.io/redhat_na_ssa/universal-developer-image:latest
             ${{ steps.meta.outputs.tags }}
