@@ -218,9 +218,9 @@ repo_gpgcheck=1
 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 EOF2
 
-dnf install -y kubectl \n \
+dnf install -y kubectl
 curl -sSL -o ~/.kubectl_aliases https://raw.githubusercontent.com/ahmetb/kubectl-alias/master/.kubectl_aliases
-echo "[ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases" >> /home/user/.bashrc
+echo '[ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases' >> /home/user/.bashrc
 EOF
 
 # kubectl completion
