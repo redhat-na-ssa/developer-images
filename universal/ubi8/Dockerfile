@@ -438,11 +438,8 @@ EOF
 # rm -rf "${TEMP_DIR}"
 # EOF
 
-# Set permissions on /etc/passwd, /home, /etc/hosts to allow arbitrary users to write
-RUN mkdir -p /home/user && chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/hosts /etc/group /home
-
-# cleanup dnf cache
-# RUN dnf -y clean all --enablerepo=\*
+# Set permissions on /home to allow arbitrary users to write
+RUN mkdir -p /home/user && chgrp -R 0 /home && chmod -R g=u /home
 
 COPY --chown=0:0 entrypoint.sh /
 
