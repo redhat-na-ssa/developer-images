@@ -29,7 +29,7 @@ RUN curl -fsSL "https://get.sdkman.io" | bash \
              && sdk install java 11.0.19-tem \
              && sdk install java 17.0.7-tem \
              && sdk install java 21-open \
-             && sdk default java 11.0.19-tem \
+             && sdk default java 21-open \
              && sdk install gradle \
              && sdk install maven \
              && sdk install jbang \
