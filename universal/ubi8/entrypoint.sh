@@ -28,6 +28,7 @@ if [ "${KUBEDOCK_ENABLED:-false}" = "true" ]; then
 
     ln -f -s /usr/bin/podman.wrapper /home/user/.local/bin/podman
 
+    export DOCKER_HOST="tcp://127.0.0.1:2475"
     export TESTCONTAINERS_RYUK_DISABLED="true"
     export TESTCONTAINERS_CHECKS_DISABLE="true"
 
