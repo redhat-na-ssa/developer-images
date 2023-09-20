@@ -201,7 +201,7 @@ RUN curl -L https://github.com/joyrex2001/kubedock/releases/download/${KUBEDOCK_
     && chmod +x /usr/local/bin/kubedock
 
 # Configure the podman wrapper
-COPY --chown=0:0 podman-wrapper.sh /usr/bin/podman.wrapper
+COPY --chown=0:0 --chmod=755 podman-wrapper.sh /usr/bin/podman.wrapper
 RUN mv /usr/bin/podman /usr/bin/podman.orig
 
 ## kubectl
@@ -441,6 +441,6 @@ EOF
 # Set permissions on /home to allow arbitrary users to write
 RUN mkdir -p /home/user && chgrp -R 0 /home && chmod -R g=u /home
 
-COPY --chown=0:0 entrypoint.sh /
+COPY --chown=0:0 --chmod=755 entrypoint.sh /
 
 USER 10001
