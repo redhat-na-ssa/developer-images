@@ -59,7 +59,7 @@ jobs:
           provenance: false
           context: python-mongo/ubi8
           tags: |
-            quay.io/redhat-na-ssa/python-developer-image:latest
+            quay.io/redhat-na-ssa/python3-developer-image:latest
             ${{ steps.meta.outputs.tags }}
       - name: Get tag with uniq prefix
         id: setTagName
