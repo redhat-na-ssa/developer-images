@@ -36,7 +36,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            quay.io/redhat-na-ssa/python3-developer-image
+            quay.io/redhat_na_ssa/python3-developer-image
           flavor: |
             latest=true
             prefix=ubi8-,onlatest=true
@@ -59,7 +59,7 @@ jobs:
           provenance: false
           context: python-mongo/ubi8
           tags: |
-            quay.io/redhat-na-ssa/python3-developer-image:latest
+            quay.io/redhat_na_ssa/python3-developer-image:latest
             ${{ steps.meta.outputs.tags }}
       - name: Get tag with uniq prefix
         id: setTagName

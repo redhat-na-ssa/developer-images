@@ -15,7 +15,7 @@ $ docker run -ti --rm \
        quay.io/devfile/base-developer-image:ubi8-latest \
        bash
 ```
-### Included Developement Tools
+### Included Developement Tools 
 
 | Tool                | ubi8 based image                    |
 |---------------------|-------------------------------------|
@@ -69,7 +69,7 @@ Run the following command to test it with Docker:
 
 ```bash
 docker run -ti --rm \
-       quay.io/redhat-na-ssa/python3-developer-image:ubi8-latest \
+       quay.io/redhat_na_ssa/python3-developer-image:ubi8-latest \
        bash
 ```
 ### Included Development Tools
