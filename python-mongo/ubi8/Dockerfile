@@ -320,7 +320,6 @@ RUN <<EOF
 oc completion bash > /usr/share/bash-completion/completions/oc
 tkn completion bash > /usr/share/bash-completion/completions/tkn 
 kubectl completion bash > /usr/share/bash-completion/completions/kubectl
-cat ${NVM_DIR}/bash_completion > /usr/share/bash-completion/completions/nvm
 EOF
 
 # Create symbolic links from /home/tooling/ -> /home/user/
