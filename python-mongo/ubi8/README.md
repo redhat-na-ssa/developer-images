@@ -61,7 +61,7 @@ $ docker run -ti --rm \
 | `zsh`               |`NOT AVAILABLE (fedora only)`        |
 | **TOTAL SIZE**      | **412MB** (143MB compressed)        |
 
-## Developer Python Image
+## Developer Python and MongoDB Image
 
 ### Red Hat Universal Base Image ([UBI](https://developers.redhat.com/articles/ubi-faq#)) based image ([quay.io/devfile/universal-developer-image:ubi8-latest](https://quay.io/repository/devfile/universal-developer-image))
 
