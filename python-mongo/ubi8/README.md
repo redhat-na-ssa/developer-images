@@ -110,3 +110,4 @@ This repo contains [actions](https://github.com/eclipse-che/che-operator/actions
 # License
 
 Che is open sourced under the Eclipse Public License 2.0.
+ 
