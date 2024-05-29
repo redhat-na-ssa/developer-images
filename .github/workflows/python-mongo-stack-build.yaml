@@ -57,9 +57,9 @@ jobs:
         with:
           push: ${{ github.event_name != 'pull_request' }}
           provenance: false
-          context: universal/ubi8
+          context: python-mongo/ubi8
           tags: |
-            quay.io/redhat-na-ssa/python3-developer-image:latest
+            quay.io/redhat-na-ssa/python-developer-image:latest
             ${{ steps.meta.outputs.tags }}
       - name: Get tag with uniq prefix
         id: setTagName
