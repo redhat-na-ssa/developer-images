@@ -83,9 +83,7 @@ docker run -ti --rm \
 | `pylint`            |`<via pip>`                          |
 | `yq`                |`<via pip>`                          |
 |--------MONGODB------|-------------------------------------|
-| `rustup`            |`<sh.rustup.rs>`                     |
-| `rust-src`          |`<via rustup>`                       |
-| `rust-analysis`     |`<via rustup>`                       |
+| `mongosh`           |`2.2.6.x86_64`                       |
 |------CLOUD----------|-------------------------------------|
 | `oc`                |`mirror.openshift.com`               |
 | `tkn`               |`mirror.openshift.com`               |
@@ -101,11 +99,8 @@ docker run -ti --rm \
 | `terraform`         |`<releases.hashicorp.com>`           |
 | `docker`            |`<download.docker.com>`              |
 | `docker-compose`    |`<gh releases>`                      |
+| `skaffold`          |`google releases`                    |
 | **TOTAL SIZE**      | **8.75GB** (3.6GB compressed)       |
-
-### Included libraries
-
-#### e2fsprogs v1.46.5
 
 # Builds
 

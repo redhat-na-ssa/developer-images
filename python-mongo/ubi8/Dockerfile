@@ -5,16 +5,16 @@ FROM quay.io/devfile/base-developer-image:ubi8-latest
 LABEL maintainer="Red Hat, Inc."
 
 LABEL com.redhat.component="devfile-universal-container"
-LABEL name="devfile/universal-developer-image"
+LABEL name="redhat-na-ssa/python-developer-image"
 LABEL version="ubi8"
 
 #label for EULA
 LABEL com.redhat.license_terms="https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI"
 
 #labels for container catalog
-LABEL summary="devfile universal developer image"
-LABEL description="Image with developers tools. Languages SDK and runtimes included."
-LABEL io.k8s.display-name="devfile-developer-universal"
+LABEL summary="devfile universal developer image for Python"
+LABEL description="Image with developers tools and runtimes for Python and MongoDB."
+LABEL io.k8s.display-name="devfile-developer-python"
 LABEL io.openshift.expose-services=""
 
 USER 0
@@ -44,6 +44,9 @@ ENV PATH="/home/tooling/.local/bin:$PATH"
 
 # Required packages for AWT
 RUN dnf install -y libXext libXrender libXtst libXi
+
+# C/CPP
+RUN dnf -y install llvm-toolset gcc gcc-c++ clang clang-libs clang-tools-extra gdb
 
 # Python
 RUN dnf -y install python3.11 python3.11-devel python3.11-setuptools python3.11-pip nss_wrapper
@@ -282,30 +285,31 @@ RUN curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/sk
     install skaffold /usr/local/bin/
 
 # e2fsprogs setup
+# required when using IntelliJ IDEA (see https://github.com/eclipse-che/che/issues/21007)
 # Since e2fsprogs-static package has removed RHEL 8 distribution, it is not possible to install from the repository
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/considerations_in_adopting_rhel_8/index#removed-packages_changes-to-packages
-RUN <<EOF
-set -euf -o pipefail
-TEMP_DIR="$(mktemp -d)"
-cd "${TEMP_DIR}"
-E2FSPROGS_VERSION="1.46.5"
-E2FSPROGS_TGZ="e2fsprogs-${E2FSPROGS_VERSION}.tar.gz"
-E2FSPROGS_TGZ_URL="https://mirrors.edge.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${E2FSPROGS_VERSION}/${E2FSPROGS_TGZ}"
-E2FSPROGS_CHEKSUMS_URL="https://mirrors.edge.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${E2FSPROGS_VERSION}/sha256sums.asc"
-curl -sSLO "${E2FSPROGS_TGZ_URL}"
-curl -sSLO "${E2FSPROGS_CHEKSUMS_URL}"
-sha256sum --ignore-missing -c "sha256sums.asc" 2>&1 | grep OK
-tar -zxv --no-same-owner -f "${E2FSPROGS_TGZ}"
-cd "e2fsprogs-${E2FSPROGS_VERSION}"
-mkdir build
-cd build
-../configure --prefix=/usr --with-root-prefix="" --enable-elf-shlibs --disable-evms
-make
-make install
-make install-libs
-cd -
-rm -rf "${TEMP_DIR}"
-EOF
+# RUN <<EOF
+# set -euf -o pipefail
+# TEMP_DIR="$(mktemp -d)"
+# cd "${TEMP_DIR}"
+# E2FSPROGS_VERSION="1.46.5"
+# E2FSPROGS_TGZ="e2fsprogs-${E2FSPROGS_VERSION}.tar.gz"
+# E2FSPROGS_TGZ_URL="https://mirrors.edge.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${E2FSPROGS_VERSION}/${E2FSPROGS_TGZ}"
+# E2FSPROGS_CHEKSUMS_URL="https://mirrors.edge.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${E2FSPROGS_VERSION}/sha256sums.asc"
+# curl -sSLO "${E2FSPROGS_TGZ_URL}"
+# curl -sSLO "${E2FSPROGS_CHEKSUMS_URL}"
+# sha256sum --ignore-missing -c "sha256sums.asc" 2>&1 | grep OK
+# tar -zxv --no-same-owner -f "${E2FSPROGS_TGZ}"
+# cd "e2fsprogs-${E2FSPROGS_VERSION}"
+# mkdir build
+# cd build
+# ../configure --prefix=/usr --with-root-prefix="" --enable-elf-shlibs --disable-evms
+# make
+# make install
+# make install-libs
+# cd -
+# rm -rf "${TEMP_DIR}"
+# EOF
 
 # Bash completions
 RUN dnf -y install bash-completion \
