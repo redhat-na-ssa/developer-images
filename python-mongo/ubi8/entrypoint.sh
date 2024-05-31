@@ -6,7 +6,7 @@ if [ "${KUBEDOCK_ENABLED:-false}" = "true" ]; then
     echo "Kubedock is enabled (env variable KUBEDOCK_ENABLED is set to true)."
 
     SECONDS=0
-    KUBEDOCK_TIMEOUT=${KUBEDOCK_TIMEOUT:-10}
+    KUBEDOCK_TIMEOUT=${KUBEDOCK_TIMEOUT:-45}
     until [ -f $KUBECONFIG ]; do
         if (( SECONDS > KUBEDOCK_TIMEOUT )); then
             break 

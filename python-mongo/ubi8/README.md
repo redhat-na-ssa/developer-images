@@ -100,7 +100,7 @@ docker run -ti --rm \
 | `docker`            |`<download.docker.com>`              |
 | `docker-compose`    |`<gh releases>`                      |
 | `skaffold`          |`google releases`                    |
-| **TOTAL SIZE**      | **3.75GB** (3.6GB compressed)       |
+| **TOTAL SIZE**      | **3.63GB** (1.2GB compressed)       |
 
 # Builds
 
