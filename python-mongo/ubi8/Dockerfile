@@ -110,15 +110,6 @@ RUN mkdir -p "${HOME}"/.config/containers && \
 # Configure container engine
 COPY --chown=0:0 containers.conf /etc/containers/containers.conf
 
-# Install kubedock
-ENV KUBEDOCK_VERSION 0.15.5
-RUN curl -L https://github.com/joyrex2001/kubedock/releases/download/${KUBEDOCK_VERSION}/kubedock_${KUBEDOCK_VERSION}_linux_amd64.tar.gz | tar -C /usr/local/bin -xz --no-same-owner \
-    && chmod +x /usr/local/bin/kubedock
-
-# Configure the podman wrapper
-COPY --chown=0:0 podman-wrapper.sh /usr/bin/podman.wrapper
-RUN mv /usr/bin/podman /usr/bin/podman.orig
-
 ENV K8S_VERSION=1.28
 ## kubectl
 RUN <<EOF
