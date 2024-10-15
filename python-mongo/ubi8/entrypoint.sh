@@ -20,6 +20,13 @@ if [ $HOME_USER_MOUNTED -eq 0 ] && [ ! -f $STOW_COMPLETE ]; then
     # but we don't want them to be symbolic links (so that they persist on the PVC)
     cp /home/tooling/.bashrc /home/user/.bashrc
     cp /home/tooling/.bash_profile /home/user/.bash_profile
+
+    echo "shopt -s histappend" >> /home/user/.bashrc
+    echo "export PROMPT_COMMAND="history -a"" >> /home/user/.bashrc
+    echo "HISTSIZE=10000" >> /home/user/.bashrc
+    echo "HISTFILESIZE=50000" >> /home/user/.bashrc
+    echo "HISTCONTROL=\"ignoredups:ignorespace\"" >> /home/user/.bashrc
+
     touch $STOW_COMPLETE
 fi
 
